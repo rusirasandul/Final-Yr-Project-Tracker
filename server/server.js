@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import taskRoutes from './routes/taskRoutes.js';
+import profileRoutes from './routes/profileRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/tasks', taskRoutes);
+app.use('/api/profile', profileRoutes);
 
 const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGO_URI)
