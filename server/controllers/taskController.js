@@ -3,7 +3,8 @@ import Task from '../models/Task.js';
 /* ── GET all tasks ─────────────────────────────────────── */
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find().sort({ stepNumber: 1 });
+    const filter = req.query.module ? { module: req.query.module } : {};
+    const tasks = await Task.find(filter).sort({ module: 1, stepNumber: 1 });
     res.status(200).json(tasks);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -142,13 +143,15 @@ export const removeAction = async (req, res) => {
 /* ── POST create custom task ───────────────────────────── */
 export const createTask = async (req, res) => {
   try {
-    const { title, category, description, deadline, stepNumber } = req.body;
-    const count = await Task.countDocuments();
+    const { module, title, category, description, deadline, stepNumber } = req.body;
+    if (!module) return res.status(400).json({ message: 'module is required' });
+    const count = await Task.countDocuments({ module });
     const newTask = new Task({
+      module,
       title,
-      category: category || 'Research Formulation',
+      category: category || 'Week',
       description: description || '',
-      deadline: deadline || new Date(),
+      deadline: deadline || undefined,
       stepNumber: stepNumber || count + 1,
       status: 'Pending',
       links: [],

@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import taskRoutes from './routes/taskRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
+import { ensureStructure } from './modules.js';
 
 dotenv.config();
 const app = express();
@@ -36,8 +37,9 @@ app.use('/api/profile', profileRoutes);
 
 const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log('Connected to MongoDB');
+    await ensureStructure();
     app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
   })
   .catch((err) => console.error('MongoDB connection failed:', err));

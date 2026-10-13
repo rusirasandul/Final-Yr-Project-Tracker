@@ -26,15 +26,12 @@ const ActionSchema = new mongoose.Schema({
 }, { _id: true });
 
 const TaskSchema = new mongoose.Schema({
+  module:     { type: String, required: true, index: true },
   stepNumber: { type: Number, required: true },
   title:      { type: String, required: true },
-  category: {
-    type: String,
-    enum: ['Research Formulation', 'PPRS', 'IPD', 'Dissertation', 'Viva Prep'],
-    required: true
-  },
-  description: { type: String, required: true },
-  deadline:    { type: Date, required: true },
+  category:   { type: String, default: 'Week' },
+  description: { type: String, default: '' },
+  deadline:    { type: Date },
   status:      { type: String, enum: ['Pending', 'In Progress', 'Completed'], default: 'Pending' },
   notes:       { type: String, default: '' },
   links:       [LinkSchema],

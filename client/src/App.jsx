@@ -1,62 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import TaskCard from './components/TaskCard';
+import ModuleLanding from './components/ModuleLanding';
+import ModulePage from './components/ModulePage';
+import { getModule } from './modules';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+const readHash = () => {
+  const id = window.location.hash.replace('#/', '');
+  return getModule(id) ? id : null;
+};
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchTasks = async () => {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/api/tasks`);
-      setTasks(res.data);
-    } catch (err) {
-      console.error('Failed to load tasks', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [moduleId, setModuleId] = useState(readHash());
 
   useEffect(() => {
-    fetchTasks();
+    axios.get(`${API_BASE_URL}/api/tasks`)
+      .then(res => setTasks(res.data))
+      .catch(err => console.error('Failed to load tasks', err))
+      .finally(() => setLoading(false));
+
+    const onHash = () => setModuleId(readHash());
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  const completedCount = tasks.filter(t => t.status === 'Completed').length;
-  const progressPercent = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+  const open = (id) => { window.location.hash = `#/${id}`; };
+  const back = () => { window.location.hash = ''; };
+
+  const replaceTask = (t) => setTasks(prev => prev.map(x => x._id === t._id ? t : x));
+  const removeTask = (id) => setTasks(prev => prev.filter(x => x._id !== id));
+  const addTask = (t) => setTasks(prev => [...prev, t]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-2xl font-bold tracking-tight">Final Year Project Milestone Tracker</h1>
-          <p className="text-slate-400 text-sm mt-1">Research Progression & Assessment Portal Dispatch</p>
-          
-          <div className="mt-4 bg-slate-900 border border-slate-800 p-4 rounded-lg">
-            <div className="flex justify-between text-xs text-slate-400 mb-1">
-              <span>Overall Progress</span>
-              <span>{completedCount} of {tasks.length} Completed ({progressPercent}%)</span>
-            </div>
-            <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-              <div 
-                className="bg-sky-500 h-full transition-all duration-300" 
-                style={{ width: `${progressPercent}%` }} 
-              />
-            </div>
-          </div>
-        </header>
-
-        {loading ? (
-          <div className="text-center text-slate-500 text-sm py-12">Loading roadmap...</div>
-        ) : (
-          <div>
-            {tasks.map(task => (
-              <TaskCard key={task._id} task={task} onRefresh={fetchTasks} />
-            ))}
-          </div>
-        )}
-      </div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-6 sm:p-8">
+      {loading ? (
+        <div className="text-center text-slate-500 text-sm py-12">Loading modules...</div>
+      ) : moduleId ? (
+        <ModulePage
+          moduleId={moduleId}
+          tasks={tasks}
+          onBack={back}
+          onTaskChange={replaceTask}
+          onTaskRemove={removeTask}
+          onTaskAdd={addTask}
+        />
+      ) : (
+        <ModuleLanding tasks={tasks} onOpen={open} />
+      )}
     </div>
   );
 }
