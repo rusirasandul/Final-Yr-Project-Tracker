@@ -58,6 +58,26 @@ export default function ModulePage({ moduleId, tasks, onBack, onTaskChange, onTa
           </div>
         </div>
 
+        {mod.assessments && (
+          <div className="border-t border-slate-800 p-4 overflow-x-auto">
+            <table className="w-full text-xs text-left text-slate-300">
+              <thead className="text-slate-500">
+                <tr><th className="pr-3 pb-1">Assessment</th><th className="pr-3 pb-1">Weight</th><th className="pr-3 pb-1">Qualifying</th><th className="pb-1">Due</th></tr>
+              </thead>
+              <tbody>
+                {mod.assessments.map(a => (
+                  <tr key={a.name} className="align-top">
+                    <td className="pr-3 py-1"><div className="font-semibold text-slate-100">{a.name}</div><div className="text-slate-500">{a.note}</div></td>
+                    <td className="pr-3 py-1">{a.weight}</td>
+                    <td className="pr-3 py-1">{a.qualifying}</td>
+                    <td className="py-1">{a.due}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
         <div className="border-t border-slate-800">
           {list.map(task => (
             <WeekItem key={task._id} task={task} onChange={onTaskChange} onDelete={remove} />

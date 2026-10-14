@@ -42,6 +42,13 @@ export default function WeekItem({ task, onChange, onDelete }) {
           <div className="font-semibold text-slate-100">{task.title}</div>
           <div className="text-xs text-slate-400 mt-0.5">{subtitle}</div>
         </div>
+        <button
+          title={`Remove ${task.title}`}
+          onClick={(e) => { e.stopPropagation(); confirm(`Delete "${task.title}"?`) && onDelete(task._id); }}
+          className="text-slate-500 hover:text-rose-400 p-1"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
         <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
       </div>
 
@@ -49,7 +56,15 @@ export default function WeekItem({ task, onChange, onDelete }) {
         <div className="px-4 pb-5 pt-1 space-y-5 text-sm bg-slate-900/40">
           {/* Notes */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Notes</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-slate-400">Notes</label>
+              {(notes || task.notes) && (
+                <button
+                  onClick={() => { setNotes(''); run(axios.patch(`${url}/notes`, { notes: '' })); }}
+                  className="text-xs text-slate-500 hover:text-rose-400 flex items-center gap-1"
+                ><X className="w-3 h-3" /> Clear notes</button>
+              )}
+            </div>
             <textarea
               rows={3}
               value={notes}
@@ -68,7 +83,7 @@ export default function WeekItem({ task, onChange, onDelete }) {
                 <li key={a._id} className="flex items-center gap-2 group">
                   <input type="checkbox" checked={a.isCompleted} onChange={() => run(axios.patch(`${url}/actions/${a._id}/toggle`))} />
                   <span className={a.isCompleted ? 'line-through text-slate-500' : 'text-slate-200'}>{a.label}</span>
-                  <button onClick={() => run(axios.delete(`${url}/actions/${a._id}`))} className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-400">
+                  <button title="Remove item" onClick={() => run(axios.delete(`${url}/actions/${a._id}`))} className="ml-auto text-slate-500 hover:text-rose-400">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </li>
@@ -92,7 +107,7 @@ export default function WeekItem({ task, onChange, onDelete }) {
                 <li key={l._id} className="flex items-center gap-2 group">
                   <Link2 className="w-3.5 h-3.5 text-sky-400" />
                   <a href={l.url} target="_blank" rel="noreferrer" className="text-sky-400 hover:underline truncate">{l.label}</a>
-                  <button onClick={() => run(axios.delete(`${url}/links/${l._id}`))} className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-400">
+                  <button title="Remove link" onClick={() => run(axios.delete(`${url}/links/${l._id}`))} className="ml-auto text-slate-500 hover:text-rose-400">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </li>
@@ -118,7 +133,7 @@ export default function WeekItem({ task, onChange, onDelete }) {
                 <li key={f._id} className="flex items-center gap-2 group">
                   <Paperclip className="w-3.5 h-3.5 text-slate-400" />
                   <a href={`${API}/uploads/${f.filename}`} target="_blank" rel="noreferrer" className="text-sky-400 hover:underline truncate">{f.originalName}</a>
-                  <button onClick={() => run(axios.delete(`${url}/files/${f._id}`))} className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-400">
+                  <button title="Remove file" onClick={() => run(axios.delete(`${url}/files/${f._id}`))} className="ml-auto text-slate-500 hover:text-rose-400">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </li>
@@ -142,7 +157,7 @@ export default function WeekItem({ task, onChange, onDelete }) {
               onClick={() => confirm(`Delete "${task.title}"?`) && onDelete(task._id)}
               className="text-xs text-slate-500 hover:text-rose-400 flex items-center gap-1"
             >
-              <Trash2 className="w-3.5 h-3.5" /> Delete
+              <Trash2 className="w-3.5 h-3.5" /> Remove {task.category || 'item'}
             </button>
           </div>
         </div>
