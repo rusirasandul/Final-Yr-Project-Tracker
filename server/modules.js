@@ -18,10 +18,22 @@ export const MODULES = [
     'Revision session'
   ] },
   { id: 'fyp',               milestones: ['Research Formulation', 'PPRS', 'IPD', 'Dissertation', 'Viva Prep'] },
-  { id: 'usability-testing', weeks: 12 },
+  { id: 'usability-testing', topics: [
+    '21 Sep – Introduction to Usability Testing',
+    '28 Sep – Usability Testing Methods and Strategies (Practical 1: Scenarios, methods and metrics)',
+    '05 Oct – Research Questions and Experimental Design (Practical 2: Select a testing approach)',
+    '12 Oct – Planning and Conducting a Usability Study (Practical 3) – GROUP DEADLINE 1:00 pm',
+    '19 Oct – Ethics, Accessibility, Data Management and Responsible AI (Practical 4)',
+    '26 Oct – Data Preparation and Descriptive Statistics (Industry Engagement / Catch-up week)',
+    '02 Nov – Inferential Statistics I: Two Conditions (Practical 6: SPSS data preparation)',
+    '09 Nov – Inferential Statistics II: Multiple Conditions (Practical 7: SPSS t-tests)',
+    '16 Nov – Correlation and the Individual Dataset (Practical 8: ANOVA) – CW & slides due 19 Nov 1:00 pm',
+    '23 Nov – Group Presentations: Methods & Contributions',
+    '30 Nov – Reporting Findings and Recommendations (Practical 9: SPSS correlation)',
+    '07 Dec – Practical 10: Individual Report clinic'
+  ] },
   { id: 'devops',            weeks: 12 },
-  { id: 'cyber-security',    weeks: 12 },
-  { id: 'module-6',          weeks: 12 }
+  { id: 'cyber-security',    weeks: 12 }
 ];
 
 const topicTitle = (mod, i) => `Week ${String(i + 1).padStart(2, '0')} : ${mod.topics[i]}`;

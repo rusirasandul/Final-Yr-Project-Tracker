@@ -28,8 +28,8 @@ export default function WeekItem({ task, onChange, onDelete }) {
   const subtitle = task.actions.length ? `${done}/${task.actions.length} checklist items done` : 'No items yet — open to add notes, links, files and a checklist';
 
   return (
-    <div className="border-b border-slate-800">
-      <div className="flex items-start gap-3 py-4 px-2 cursor-pointer hover:bg-slate-900/60" onClick={() => setOpen(!open)}>
+    <div className="border-b border-slate-800/70 last:border-b-0">
+      <div className="flex items-start gap-3 py-4 px-4 cursor-pointer transition hover:bg-white/5" onClick={() => setOpen(!open)}>
         <button
           title={`${task.status} — click to change`}
           onClick={(e) => { e.stopPropagation(); run(axios.patch(`${url}/status`, { status: NEXT[task.status] })); }}
@@ -53,7 +53,7 @@ export default function WeekItem({ task, onChange, onDelete }) {
       </div>
 
       {open && (
-        <div className="px-4 pb-5 pt-1 space-y-5 text-sm bg-slate-900/40">
+        <div className="px-5 pb-5 pt-2 space-y-5 text-sm bg-black/20 fade-up">
           {/* Notes */}
           <div>
             <div className="flex items-center justify-between mb-1">

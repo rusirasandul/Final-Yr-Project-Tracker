@@ -35,9 +35,12 @@ export default function App() {
   const addTask = (t) => setTasks(prev => [...prev, t]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-6 sm:p-8">
+    <div className="min-h-screen text-slate-100 p-5 sm:p-10">
       {loading ? (
-        <div className="text-center text-slate-500 text-sm py-12">Loading modules...</div>
+        <div className="flex flex-col items-center justify-center gap-3 py-24 text-slate-400 text-sm">
+          <div className="w-8 h-8 rounded-full border-2 border-slate-700 border-t-sky-400 animate-spin" />
+          Loading modules...
+        </div>
       ) : moduleId ? (
         <ModulePage
           moduleId={moduleId}
