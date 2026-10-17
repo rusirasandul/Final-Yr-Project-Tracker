@@ -81,7 +81,7 @@ export default function ModulePage({ moduleId, tasks, onBack, onTaskChange, onTa
         )}
 
         <div className="border-t border-slate-800 p-4">
-          <Calendar tasks={list} title={`${mod.code} Calendar`} />
+          <Calendar tasks={list} title={`${mod.code} Calendar`} assessments />
         </div>
 
         <div className="border-t border-slate-800">

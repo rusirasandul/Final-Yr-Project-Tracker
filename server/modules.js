@@ -38,10 +38,20 @@ export const MODULES = [
 
 const topicTitle = (mod, i) => `Week ${String(i + 1).padStart(2, '0')} : ${mod.topics[i]}`;
 
+const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+// Reads a leading "21 Sep – ..." date from a topic (teaching year starts Sep 2026)
+const topicDate = (topic) => {
+  const m = /^(\d{1,2}) ([A-Za-z]{3}) /.exec(topic);
+  if (!m || !(m[2] in MONTHS)) return null;
+  const month = MONTHS[m[2]];
+  return new Date(Date.UTC(month >= 8 ? 2026 : 2027, month, Number(m[1])));
+};
+
 const buildEntries = (mod) => {
   if (mod.topics) {
-    return mod.topics.map((_, i) => ({
-      module: mod.id, stepNumber: i + 1, title: topicTitle(mod, i), category: 'Week'
+    return mod.topics.map((t, i) => ({
+      module: mod.id, stepNumber: i + 1, title: topicTitle(mod, i), category: 'Week',
+      deadline: topicDate(t) || undefined
     }));
   }
   if (mod.milestones) {
@@ -66,6 +76,13 @@ export const ensureStructure = async () => {
           { module: mod.id, stepNumber: i + 1 },
           { title: topicTitle(mod, i) }
         );
+        const d = topicDate(mod.topics[i]);
+        if (d) {
+          await Task.updateOne(
+            { module: mod.id, stepNumber: i + 1, deadline: { $exists: false } },
+            { deadline: d }
+          );
+        }
       }
     }
   }
