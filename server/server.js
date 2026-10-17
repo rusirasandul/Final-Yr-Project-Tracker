@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import taskRoutes from './routes/taskRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import { ensureStructure } from './modules.js';
+import { ensureFypGuidance } from './fypGuidance.js';
 
 dotenv.config();
 const app = express();
@@ -40,6 +41,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(async () => {
     console.log('Connected to MongoDB');
     await ensureStructure();
+    await ensureFypGuidance();
     app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
   })
   .catch((err) => console.error('MongoDB connection failed:', err));
