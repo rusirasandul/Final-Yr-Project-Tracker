@@ -6,7 +6,8 @@ import {
   addLink, removeLink,
   addFile, removeFile,
   toggleAction, addAction, removeAction, updateActionCategory,
-  submitPortal, resetPortal
+  submitPortal, resetPortal,
+  updateActionDueDate, updateDeadline
 } from '../controllers/taskController.js';
 
 const router = express.Router();
@@ -30,6 +31,8 @@ router.patch('/:id/actions/:actionId/toggle',            toggleAction);
 router.post('/:id/actions',                              addAction);
 router.delete('/:id/actions/:actionId',                  removeAction);
 router.patch('/:id/actions/:actionId/category',          updateActionCategory);
+router.patch('/:id/actions/:actionId/due',               updateActionDueDate);
+router.patch('/:id/deadline',                            updateDeadline);
 router.post('/:id/portal',                               submitPortal);
 router.delete('/:id/portal',                             resetPortal);
 

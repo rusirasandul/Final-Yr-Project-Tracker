@@ -22,7 +22,8 @@ const ActionSchema = new mongoose.Schema({
   isCompleted: { type: Boolean, default: false },
   completedAt: { type: Date },
   notes:       { type: String, default: '' },
-  isDefault:   { type: Boolean, default: false }
+  isDefault:   { type: Boolean, default: false },
+  dueDate:     { type: Date }
 }, { _id: true });
 
 const TaskSchema = new mongoose.Schema({

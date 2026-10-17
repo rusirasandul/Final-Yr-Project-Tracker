@@ -118,8 +118,36 @@ export const addAction = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: 'Task not found' });
-    const { label, category } = req.body;
-    task.actions.push({ label, category: category || 'custom', isDefault: false });
+    const { label, category, dueDate } = req.body;
+    task.actions.push({ label, category: category || 'custom', isDefault: false, dueDate: dueDate || undefined });
+    const saved = await task.save();
+    res.status(200).json(saved);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+/* ── PATCH action due date ─────────────────────────────── */
+export const updateActionDueDate = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+    const action = task.actions.id(req.params.actionId);
+    if (!action) return res.status(404).json({ message: 'Action not found' });
+    action.dueDate = req.body.dueDate || undefined;
+    const saved = await task.save();
+    res.status(200).json(saved);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+/* ── PATCH task deadline ───────────────────────────────── */
+export const updateDeadline = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+    task.deadline = req.body.deadline || undefined;
     const saved = await task.save();
     res.status(200).json(saved);
   } catch (err) {

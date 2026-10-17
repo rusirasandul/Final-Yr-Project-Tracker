@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { ChevronDown, Folder, Circle, CircleDot, CheckCircle2, Plus, Trash2, Link2, Paperclip, X } from 'lucide-react';
+import Calendar from './Calendar';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const NEXT = { 'Pending': 'In Progress', 'In Progress': 'Completed', 'Completed': 'Pending' };
@@ -17,6 +18,8 @@ export default function WeekItem({ task, onChange, onDelete }) {
   const [newAction, setNewAction] = useState('');
   const [linkLabel, setLinkLabel] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
+  const [newDue, setNewDue] = useState('');
+  const toInput = (d) => d ? new Date(d).toISOString().slice(0, 10) : '';
 
   const url = `${API}/api/tasks/${task._id}`;
   const run = async (req) => {
@@ -83,7 +86,10 @@ export default function WeekItem({ task, onChange, onDelete }) {
                 <li key={a._id} className="flex items-center gap-2 group">
                   <input type="checkbox" checked={a.isCompleted} onChange={() => run(axios.patch(`${url}/actions/${a._id}/toggle`))} />
                   <span className={a.isCompleted ? 'line-through text-slate-500' : 'text-slate-200'}>{a.label}</span>
-                  <button title="Remove item" onClick={() => run(axios.delete(`${url}/actions/${a._id}`))} className="ml-auto text-slate-500 hover:text-rose-400">
+                  <input type="date" title="Due date" value={toInput(a.dueDate)}
+                    onChange={(e) => run(axios.patch(`${url}/actions/${a._id}/due`, { dueDate: e.target.value || null }))}
+                    className="ml-auto bg-slate-950 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] text-slate-300" />
+                  <button title="Remove item" onClick={() => run(axios.delete(`${url}/actions/${a._id}`))} className="text-slate-500 hover:text-rose-400">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </li>
@@ -91,12 +97,21 @@ export default function WeekItem({ task, onChange, onDelete }) {
             </ul>
             <form
               className="flex gap-2 mt-2"
-              onSubmit={(e) => { e.preventDefault(); if (!newAction.trim()) return; run(axios.post(`${url}/actions`, { label: newAction.trim() })); setNewAction(''); }}
+              onSubmit={(e) => { e.preventDefault(); if (!newAction.trim()) return; run(axios.post(`${url}/actions`, { label: newAction.trim(), dueDate: newDue || undefined })); setNewAction(''); setNewDue(''); }}
             >
               <input value={newAction} onChange={(e) => setNewAction(e.target.value)} placeholder="Add checklist item"
                 className="flex-1 bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500" />
+              <input type="date" title="Due date" value={newDue} onChange={(e) => setNewDue(e.target.value)}
+                className="bg-slate-950 border border-slate-800 rounded px-2 text-xs text-slate-300" />
               <button className="px-3 rounded bg-slate-800 hover:bg-slate-700 text-slate-200"><Plus className="w-4 h-4" /></button>
             </form>
+            <div className="flex items-center gap-2 mt-3 text-xs text-slate-400">
+              <span>Deadline for this {task.category || 'item'}:</span>
+              <input type="date" value={toInput(task.deadline)}
+                onChange={(e) => run(axios.patch(`${url}/deadline`, { deadline: e.target.value || null }))}
+                className="bg-slate-950 border border-slate-800 rounded px-2 py-0.5 text-xs text-slate-300" />
+            </div>
+            <div className="mt-3"><Calendar tasks={[task]} title={`${task.title} calendar`} compact /></div>
           </div>
 
           {/* Links */}

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ArrowLeft, Plus } from 'lucide-react';
 import WeekItem from './WeekItem';
 import { getModule } from '../modules';
+import Calendar from './Calendar';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -78,6 +79,10 @@ export default function ModulePage({ moduleId, tasks, onBack, onTaskChange, onTa
             </table>
           </div>
         )}
+
+        <div className="border-t border-slate-800 p-4">
+          <Calendar tasks={list} title={`${mod.code} Calendar`} />
+        </div>
 
         <div className="border-t border-slate-800">
           {list.map(task => (

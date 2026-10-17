@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, CheckCircle2, Layers } from 'lucide-react';
 import { MODULES } from '../modules';
+import Calendar from './Calendar';
 
 export default function ModuleLanding({ tasks, onOpen }) {
   const total = tasks.length;
@@ -39,6 +40,10 @@ export default function ModuleLanding({ tasks, onOpen }) {
           </div>
         </div>
       </header>
+
+      <div className="mb-10 fade-up max-w-xl">
+        <Calendar tasks={tasks} title="Deadlines & To-do Calendar" />
+      </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {MODULES.map((mod, i) => {
