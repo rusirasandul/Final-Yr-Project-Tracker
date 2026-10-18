@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
 const LinkSchema = new mongoose.Schema({
-  label:    { type: String, required: true },
-  url:      { type: String, required: true },
+  label: { type: String, required: true },
+  url: { type: String, required: true },
   linkType: {
     type: String,
     enum: ['github', 'overleaf', 'googledocs', 'onedrive', 'blackboard', 'turnitin', 'slides', 'paper', 'dataset', 'other'],
@@ -12,37 +12,38 @@ const LinkSchema = new mongoose.Schema({
 
 const FileSchema = new mongoose.Schema({
   originalName: { type: String },
-  filename:     { type: String },   // stored filename (timestamp-original)
-  uploadedAt:   { type: Date, default: Date.now }
+  filename: { type: String },   // stored filename (timestamp-original)
+  uploadedAt: { type: Date, default: Date.now }
 }, { _id: true });
 
 const ActionSchema = new mongoose.Schema({
-  label:       { type: String, required: true },
-  category:    { type: String, enum: ['compulsory', 'mandatory', 'optional', 'not_needed', 'custom'], default: 'optional' },
+  label: { type: String, required: true },
+  category: { type: String, enum: ['compulsory', 'mandatory', 'optional', 'not_needed', 'custom'], default: 'optional' },
   isCompleted: { type: Boolean, default: false },
   completedAt: { type: Date },
-  notes:       { type: String, default: '' },
-  isDefault:   { type: Boolean, default: false },
-  dueDate:     { type: Date }
+  notes: { type: String, default: '' },
+  isDefault: { type: Boolean, default: false },
+  dueDate: { type: Date }
 }, { _id: true });
 
 const TaskSchema = new mongoose.Schema({
-  module:     { type: String, required: true, index: true },
+  module: { type: String, required: true, index: true },
   stepNumber: { type: Number, required: true },
-  title:      { type: String, required: true },
-  category:   { type: String, default: 'Week' },
+  title: { type: String, required: true },
+  category: { type: String, default: 'Week' },
   description: { type: String, default: '' },
-  deadline:    { type: Date },
-  status:      { type: String, enum: ['Pending', 'In Progress', 'Completed'], default: 'Pending' },
-  notes:       { type: String, default: '' },
-  links:       [LinkSchema],
-  files:       [FileSchema],
-  actions:     [ActionSchema],
+  deadline: { type: Date },
+  status: { type: String, enum: ['Pending', 'In Progress', 'Completed'], default: 'Pending' },
+  notes: { type: String, default: '' },
+  supervisorFeedback: { type: String, default: '' },
+  links: [LinkSchema],
+  files: [FileSchema],
+  actions: [ActionSchema],
   portalSubmission: {
-    portalName:           { type: String, default: 'Blackboard' },
-    isSubmitted:          { type: Boolean, default: false },
-    submittedAt:          { type: Date },
-    submissionReference:  { type: String, default: '' }
+    portalName: { type: String, default: 'Blackboard' },
+    isSubmitted: { type: Boolean, default: false },
+    submittedAt: { type: Date },
+    submissionReference: { type: String, default: '' }
   }
 }, { timestamps: true });
 

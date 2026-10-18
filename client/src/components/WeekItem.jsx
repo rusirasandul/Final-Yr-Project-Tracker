@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { ChevronDown, Folder, Circle, CircleDot, CheckCircle2, Plus, Trash2, Link2, Paperclip, X } from 'lucide-react';
 import Calendar from './Calendar';
+import AutoTextarea from './AutoTextarea';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const NEXT = { 'Pending': 'In Progress', 'In Progress': 'Completed', 'Completed': 'Pending' };
@@ -15,6 +16,7 @@ const StatusIcon = ({ status }) => {
 export default function WeekItem({ task, onChange, onDelete }) {
   const [open, setOpen] = useState(false);
   const [notes, setNotes] = useState(task.notes || '');
+  const [feedback, setFeedback] = useState(task.supervisorFeedback || '');
   const [newAction, setNewAction] = useState('');
   const [linkLabel, setLinkLabel] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
@@ -68,13 +70,34 @@ export default function WeekItem({ task, onChange, onDelete }) {
                 ><X className="w-3 h-3" /> Clear notes</button>
               )}
             </div>
-            <textarea
-              rows={3}
+            <AutoTextarea
+              minRows={3}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               onBlur={() => notes !== task.notes && run(axios.patch(`${url}/notes`, { notes }))}
               placeholder="Write notes for this week..."
               className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-sky-500"
+            />
+          </div>
+
+          {/* Supervisor feedback */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-violet-300">Supervisor Feedback</label>
+              {(feedback || task.supervisorFeedback) && (
+                <button
+                  onClick={() => { setFeedback(''); run(axios.patch(`${url}/supervisor-feedback`, { supervisorFeedback: '' })); }}
+                  className="text-xs text-slate-500 hover:text-rose-400 flex items-center gap-1"
+                ><X className="w-3 h-3" /> Clear feedback</button>
+              )}
+            </div>
+            <AutoTextarea
+              minRows={3}
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              onBlur={() => feedback !== (task.supervisorFeedback || '') && run(axios.patch(`${url}/supervisor-feedback`, { supervisorFeedback: feedback }))}
+              placeholder="Supervisor feedback (saved automatically)..."
+              className="w-full bg-slate-950 border border-violet-500/30 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-violet-400"
             />
           </div>
 

@@ -39,6 +39,21 @@ export const updateNotes = async (req, res) => {
   }
 };
 
+/* ── PATCH supervisor feedback ─────────────────────────── */
+export const updateSupervisorFeedback = async (req, res) => {
+  try {
+    const feedback = req.body.supervisorFeedback || '';
+    const updated = await Task.findByIdAndUpdate(
+      req.params.id,
+      { supervisorFeedback: feedback },
+      { new: true }
+    );
+    res.status(200).json(updated);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 /* ── POST link ─────────────────────────────────────────── */
 export const addLink = async (req, res) => {
   try {
@@ -74,8 +89,8 @@ export const addFile = async (req, res) => {
     if (!task) return res.status(404).json({ message: 'Task not found' });
     task.files.push({
       originalName: req.file.originalname,
-      filename:     req.file.filename,   // just the stored filename
-      uploadedAt:   new Date()
+      filename: req.file.filename,   // just the stored filename
+      uploadedAt: new Date()
     });
     const saved = await task.save();
     res.status(200).json(saved);
@@ -226,9 +241,9 @@ export const submitPortal = async (req, res) => {
     const { submissionReference, portalName } = req.body;
     task.status = 'Completed';
     task.portalSubmission = {
-      portalName:          portalName || 'Blackboard',
-      isSubmitted:         true,
-      submittedAt:         new Date(),
+      portalName: portalName || 'Blackboard',
+      isSubmitted: true,
+      submittedAt: new Date(),
       submissionReference: submissionReference || ''
     };
     const saved = await task.save();
