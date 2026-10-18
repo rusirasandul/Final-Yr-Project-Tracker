@@ -200,4 +200,48 @@ export const ensureFypGuidance = async () => {
       actions: g.actions
     });
   }
+  await ensurePprsEvidence();
 };
+
+// Evidence required for the PP/PPRS submission – merged into the existing 'PPRS' milestone (not separate milestones).
+const PPRS_EVIDENCE_MARKER = 'PP EVIDENCE PACK';
+const PPRS_EVIDENCE_NOTES =
+`${PPRS_EVIDENCE_MARKER} (incomplete work is acceptable – submit what exists and mark what is missing):
+1) Current PP slides  2) Literature review evidence (papers, survey matrix, comparisons)  3) Problem & gap analysis  4) Research & technical investigations (datasets, technology/algorithm comparisons, feasibility)  5) R&D methodology justification  6) Other supporting evidence (designs, experiments, prototype, source code, initial results).`;
+const PPRS_EVIDENCE_ACTIONS = [
+  c('Evidence 1 – Current PP slides: export the slides prepared so far (PDF) and attach/link them'),
+  c('Evidence 2 – Literature review: reviewed papers, literature survey matrix, comparative analysis, key findings'),
+  c('Evidence 3 – Problem & gap: evidence the problem exists, research gaps, proposed contribution'),
+  c('Evidence 4 – Technical investigations: dataset investigation, technology/algorithm comparisons, feasibility study'),
+  c('Evidence 5 – Methodology: work done identifying and justifying the R&D methodology'),
+  o('Evidence 6 – Supporting: preliminary designs, experiments, prototype, source code (repo link), initial results')
+];
+// Titles of the separate milestones seeded earlier – removed (only if still untouched) in favour of PPRS.
+const OLD_EVIDENCE_TITLES = [
+  'PP Evidence Pack: Index & Submission Checklist',
+  'PP Slides: Current Draft',
+  'Technical Investigations & Feasibility',
+  'Supporting Evidence: Designs, Prototype & Initial Results'
+];
+
+/** Adds the PP evidence checklist to the PPRS milestone and removes the earlier separate tasks. */
+export const ensurePprsEvidence = async () => {
+  await Task.deleteMany({
+    module: 'fyp',
+    title: { $in: OLD_EVIDENCE_TITLES },
+    'files.0': { $exists: false },
+    'links.0': { $exists: false },
+    status: 'Pending'
+  });
+
+  const pprs = await Task.findOne({ module: 'fyp', title: 'PPRS' });
+  if (!pprs) return;
+  const labels = new Set(pprs.actions.map(a => a.label));
+  PPRS_EVIDENCE_ACTIONS.filter(a => !labels.has(a.label)).forEach(a => pprs.actions.push(a));
+  if (!(pprs.notes || '').includes(PPRS_EVIDENCE_MARKER)) {
+    pprs.notes = pprs.notes ? `${pprs.notes}\n\n${PPRS_EVIDENCE_NOTES}` : PPRS_EVIDENCE_NOTES;
+  }
+  if (!pprs.deadline) pprs.deadline = PROPOSAL_DEADLINE;
+  await pprs.save();
+};
+
