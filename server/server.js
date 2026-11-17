@@ -9,6 +9,7 @@ import taskRoutes from './routes/taskRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import { ensureStructure } from './modules.js';
 import { ensureFypGuidance } from './fypGuidance.js';
+import { ensureUsabilityCoursework } from './usabilityCoursework.js';
 
 dotenv.config();
 const app = express();
@@ -42,6 +43,7 @@ mongoose.connect(process.env.MONGO_URI)
     console.log('Connected to MongoDB');
     await ensureStructure();
     await ensureFypGuidance();
+    await ensureUsabilityCoursework();
     app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
   })
   .catch((err) => console.error('MongoDB connection failed:', err));

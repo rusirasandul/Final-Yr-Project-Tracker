@@ -59,6 +59,46 @@ export default function WeekItem({ task, onChange, onDelete }) {
 
       {open && (
         <div className="px-5 pb-5 pt-2 space-y-5 text-sm bg-black/20 fade-up">
+          {/* Marking criteria (rubric) */}
+          {task.rubric?.length > 0 && (
+            <div>
+              <label className="block text-xs font-semibold text-amber-300 mb-1">Marking Criteria</label>
+              <div className="overflow-x-auto border border-slate-800 rounded">
+                <table className="w-full text-xs text-left text-slate-300">
+                  <thead className="text-slate-500 bg-slate-950/60">
+                    <tr>
+                      <th className="px-2 py-1.5">Criterion</th>
+                      <th className="px-2 py-1.5 whitespace-nowrap">Weight / Format</th>
+                      <th className="px-2 py-1.5 whitespace-nowrap">Checklist</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {task.rubric.map(r => {
+                      const items = task.actions.filter(a => a.label.startsWith(`[${r.tag}]`));
+                      const ok = items.filter(a => a.isCompleted).length;
+                      const pct = items.length ? Math.round((ok / items.length) * 100) : 0;
+                      return (
+                        <tr key={r.tag} className="align-top border-t border-slate-800">
+                          <td className="px-2 py-1.5">
+                            <div className="font-semibold text-slate-100">{r.criterion}</div>
+                            <div className="text-slate-500">{r.descriptor}</div>
+                          </td>
+                          <td className="px-2 py-1.5 whitespace-nowrap font-semibold text-amber-200">{r.weight}</td>
+                          <td className="px-2 py-1.5 whitespace-nowrap">
+                            <div className={ok === items.length && items.length ? 'text-emerald-400' : 'text-slate-300'}>{ok}/{items.length}</div>
+                            <div className="w-16 bg-slate-700 h-1 rounded-full overflow-hidden mt-1">
+                              <div className="h-full bg-emerald-400 transition-all" style={{ width: `${pct}%` }} />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {/* Notes */}
           <div>
             <div className="flex items-center justify-between mb-1">

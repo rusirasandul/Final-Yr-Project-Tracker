@@ -12,7 +12,7 @@ const LinkSchema = new mongoose.Schema({
 
 const FileSchema = new mongoose.Schema({
   originalName: { type: String },
-  filename: { type: String },   // stored filename (timestamp-original)
+  filename: { type: String },
   uploadedAt: { type: Date, default: Date.now }
 }, { _id: true });
 
@@ -25,6 +25,13 @@ const ActionSchema = new mongoose.Schema({
   isDefault: { type: Boolean, default: false },
   dueDate: { type: Date }
 }, { _id: true });
+
+const RubricSchema = new mongoose.Schema({
+  tag: { type: String, required: true },        // matches the "[tag]" prefix of checklist labels
+  criterion: { type: String, required: true },
+  weight: { type: String, default: '' },
+  descriptor: { type: String, default: '' }
+}, { _id: false });
 
 const TaskSchema = new mongoose.Schema({
   module: { type: String, required: true, index: true },
@@ -39,6 +46,10 @@ const TaskSchema = new mongoose.Schema({
   links: [LinkSchema],
   files: [FileSchema],
   actions: [ActionSchema],
+  // Optional marking criteria shown as a table on the task (e.g. PP marking rubric)
+  rubric: [RubricSchema],
+  // Version of the seeded guidance applied to this task (used for safe one-time migrations)
+  guidanceVersion: { type: Number, default: 0 },
   portalSubmission: {
     portalName: { type: String, default: 'Blackboard' },
     isSubmitted: { type: Boolean, default: false },

@@ -1,4 +1,5 @@
 import Task from './models/Task.js';
+import { PP_TITLE, PP_DEADLINE, PP_NOTES, PP_ACTIONS, PP_RUBRIC, ensureProposalPresentation } from './proposalPresentation.js';
 
 // FYP tasks derived from the lecturer's Q&A email (6 Oct 2026).
 // Seeded once per title – existing tasks (and any notes you've edited) are never overwritten.
@@ -27,28 +28,11 @@ export const FYP_GUIDANCE_TASKS = [
     ]
   },
   {
-    title: 'Project Proposal Presentation (5 Nov 2026)',
-    deadline: PROPOSAL_DEADLINE,
-    notes:
-`Q1/Q11/Q12/Q16: Assessment = proposal PRESENTATION + Ethics Form on 5 Nov 2026. There is NO separate dissertation-style proposal report (no separate Intro/LR/Methodology document).
-But the research work (literature, methodology) must still be done and synthesised into slides – do the research at report depth, communicate it concisely.
-Suggested flow: Problem → Evidence → Literature → Gap → Aim/Objectives → Requirements → Proposed Solution → Methodology/Technology → Evaluation → Ethics/Responsible Computing → Risks/Plan → Contribution/Feasibility.
-Own slide design is fine (Q2) – but do not remove academically important content for looks. Prepare BACKUP slides to defend evidence ("What supports this?"): literature table, gap analysis, dataset comparison, method justification, requirements, architecture, evaluation plan, PoC evidence, references.`,
-    actions: [
-      c('Build proposal presentation slides (own design allowed, follow marking guide)'),
-      c('Submit Ethics Application / Ethics Form'),
-      c('Slide: Problem + evidence that the problem exists'),
-      c('Slide: Literature synthesis + research gap'),
-      c('Slide: Aim, objectives, research question(s), contribution'),
-      c('Slide: Requirements (traceable to the gap)'),
-      c('Slide: Methodology + technology justification'),
-      c('Slide: Evaluation plan with baselines and metrics'),
-      c('Slide: Ethics / responsible computing'),
-      c('Slide: Risks, feasibility and project plan'),
-      m('Prepare backup slides: literature table, gap analysis, dataset comparison, architecture, PoC evidence, references'),
-      m('Rehearse answering "What evidence supports this?" for every claim'),
-      o('Check the Project Proposal sample template for expected structure')
-    ]
+    title: PP_TITLE,
+    deadline: PP_DEADLINE,
+    notes: PP_NOTES,
+    actions: PP_ACTIONS,
+    rubric: PP_RUBRIC
   },
   {
     title: 'Literature Search Strategy & Search Log',
@@ -197,9 +181,11 @@ export const ensureFypGuidance = async () => {
       category: 'Milestone',
       deadline: g.deadline,
       notes: g.notes,
-      actions: g.actions
+      actions: g.actions,
+      rubric: g.rubric
     });
   }
+  await ensureProposalPresentation();
   await ensurePprsEvidence();
 };
 
